@@ -3,10 +3,10 @@
 Foundry VTT **v13.350** compatible minimal system.
 
 ## Features
-- Actor types: **pc** and **npc** (identical for now).
+- Actor types: **pc** in progress and **npc** minimal needed stats.
 - Flat placeholder fields:
   - Health, Stamina, Mana (value / max)
-  - Seven attributes: STR, DEX, CON, INT, WIS, CHA, PER
+  - Seven attributes: STR, DEX, CON, INT, WIS, CHA, MAG
   - Armor, Dodge, Weapon Damage
   - Resistances: Physical, Fire, Cold, Electric, Spirit, Nature, Acid
   - Initiative (flat), Saves (Fortitude, Reflex, Will)

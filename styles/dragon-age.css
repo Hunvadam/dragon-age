@@ -1,0 +1,68 @@
+/* === Compact left-aligned stat columns (scoped) === */
+.dragon-age.sheet .stat-column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dragon-age.sheet .stat-column > div {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 6px;
+}
+
+.dragon-age.sheet .stat-column > div label {
+  flex: 1;
+  text-align: left;
+  font-weight: 600;
+}
+
+.dragon-age.sheet .stat-column > div input[type="number"],
+.dragon-age.sheet .stat-column > div input[type="text"] {
+  width: 80px;
+  text-align: center;
+}
+
+/* === Header Layout with Hex Portrait === */
+.dragon-age.sheet .sheet-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.dragon-age.sheet .sheet-header h1 {
+  flex: 1;
+}
+
+.dragon-age.sheet .profile-img img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%);
+  border: 2px solid #222; /* dark outline */
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4); /* subtle depth */
+  border-radius: 4px;
+}
+
+
+/* === Hexagonal token mask on the canvas === */
+.token .token-image {
+  -webkit-clip-path: polygon(
+    25% 5%, 75% 5%,
+    100% 50%,
+    75% 95%, 25% 95%,
+    0% 50%
+  );
+  clip-path: polygon(
+    25% 5%, 75% 5%,
+    100% 50%,
+    75% 95%, 25% 95%,
+    0% 50%
+  );
+  border-radius: 0;          /* disable rounding */
+  overflow: hidden;          /* ensure corners are hidden */
+}
+
+

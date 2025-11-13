@@ -1,0 +1,73 @@
+{
+  "Actor": {
+    "templates": {
+      "base": {
+        "resources": {
+          "health": {
+            "value": 10,
+            "max": 10
+          },
+          "stamina": {
+            "value": 10,
+            "max": 10
+          },
+          "mana": {
+            "value": 10,
+            "max": 10
+          }
+        },
+        "attributes": {
+          "strength": 10,
+          "dexterity": 10,
+          "constitution": 10,
+          "intelligence": 10,
+          "wisdom": 10,
+          "charisma": 10,
+          "magic": 10
+        },
+        "defense": {
+          "armor": 0,
+          "dodge": 0
+        },
+        "weapon": {
+          "damage": "1d6"
+        },
+        "resistances": {
+          "fire": 0,
+          "cold": 0,
+          "nature": 0,
+          "spirit": 0,
+          "electricity": 0,
+          "blight": 0
+        },
+        "initiative": {
+          "flat": 0
+        },
+        "saves": {
+          "fortitude": 0,
+          "reflex": 0,
+          "will": 0
+        },
+        "notes": ""
+      }
+    },
+    "types": [
+      "pc",
+      "npc"
+    ],
+    "pc": {
+      "templates": [
+        "base"
+      ]
+    },
+    "npc": {
+      "templates": [
+        "base"
+      ]
+    }
+  },
+  "Item": {
+    "types": [],
+    "templates": {}
+  }
+}

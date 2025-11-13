@@ -1,0 +1,38 @@
+{
+  "id": "dragon-age",
+  "title": "Dragon Age RPG (Homebrew)",
+  "type": "system",
+  "description": "Homebrew system of Dragon Age merged with DnD",
+  "version": "0.1.0",
+  "manifestPlusVersion": 1,
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13.350"
+  },
+  "authors": [
+    {
+      "name": "Hunvadam"
+    }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "templateVersion": 1,
+  "packs": [],
+  "esmodules": [
+    "module/dragon-age.js"
+  ],
+  "styles": [
+    "styles/dragon-age.css"
+  ],
+  "primaryTokenAttribute": "system.resources.health",
+  "secondaryTokenAttribute": "system.resources.stamina"
+  
+  "manifest": "https://raw.githubusercontent.com/Hunvadam/dragon-age/main/system.json",
+  "download": "https://github.com/Hunvadam/dragon-age/archive/refs/heads/main.zip",
+  "url": "https://github.com/Hunvadam/dragon-age"
+}
