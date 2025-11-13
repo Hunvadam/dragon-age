@@ -3,7 +3,7 @@
   "title": "Dragon Age RPG (Homebrew)",
   "type": "system",
   "description": "Homebrew system of Dragon Age merged with DnD",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "manifestPlusVersion": 1,
   "compatibility": {
     "minimum": "13",
@@ -30,7 +30,7 @@
     "styles/dragon-age.css"
   ],
   "primaryTokenAttribute": "system.resources.health",
-  "secondaryTokenAttribute": "system.resources.stamina"
+  "secondaryTokenAttribute": "system.resources.stamina",
   
   "manifest": "https://raw.githubusercontent.com/Hunvadam/dragon-age/main/system.json",
   "download": "https://github.com/Hunvadam/dragon-age/archive/refs/heads/main.zip",
