@@ -3,7 +3,7 @@
   "title": "Dragon Age RPG (Homebrew)",
   "type": "system",
   "description": "Homebrew system of Dragon Age merged with DnD",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "manifestPlusVersion": 1,
   "compatibility": {
     "minimum": "13",

@@ -1,9 +1,10 @@
 // Dragon Age RPG — Foundry VTT v13 (Legacy API, stable + saving fixed)
 
-class DragonAgeActorSheet extends foundry.appv1.sheets.ActorSheet {
+// PC sheet
+class DragonAgePCActorSheet extends foundry.appv1.sheets.ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["dragon-age", "sheet", "actor"],
+      classes: ["dragon-age", "sheet", "actor", "pc"],
       template: "systems/dragon-age/templates/actor/actor-sheet.hbs",
       width: 720,
       height: 640
@@ -12,12 +13,42 @@ class DragonAgeActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   /** Called whenever the sheet form is submitted. */
   async _updateObject(event, formData) {
-    console.log("🧾 Raw formData:", formData);
+    console.log("🧾 Raw formData (PC):", formData);
     const expanded = foundry.utils.expandObject(formData);
-    console.log("🧾 Expanded formData:", expanded);
+    console.log("🧾 Expanded formData (PC):", expanded);
     await this.document.update(expanded);
   }
 
+  /** Listen for field changes and trigger a form submit */
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    // Instant-save when any input changes
+    html.find("input, select, textarea").on("change", ev => {
+      ev.preventDefault();
+      this._onSubmit(ev, { preventClose: true });
+    });
+  }
+}
+
+// NPC sheet – currently identical to PC sheet
+class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      classes: ["dragon-age", "sheet", "actor", "npc"],
+      template: "systems/dragon-age/templates/actor/actor-sheet-npc.hbs",
+      width: 720,
+      height: 640
+    });
+  }
+
+  /** Called whenever the sheet form is submitted. */
+  async _updateObject(event, formData) {
+    console.log("🧾 Raw formData (NPC):", formData);
+    const expanded = foundry.utils.expandObject(formData);
+    console.log("🧾 Expanded formData (NPC):", expanded);
+    await this.document.update(expanded);
+  }
 
   /** Listen for field changes and trigger a form submit */
   activateListeners(html) {
@@ -36,13 +67,21 @@ class DragonAgeActorSheet extends foundry.appv1.sheets.ActorSheet {
 /* -------------------------------------------- */
 
 Hooks.once("init", async () => {
-  console.log("DRAGON-AGE | Initializing (Legacy Sheet API, stable)");
+  console.log("DRAGON-AGE | Initializing (Legacy Sheet API, separate PC/NPC sheets)");
 
-  // Register our sheet
+  // Register our sheets
   const coll = foundry.documents.collections.Actors;
   coll.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
-  coll.registerSheet("dragon-age", DragonAgeActorSheet, {
-    types: ["pc", "npc"],
+
+  // PC sheet for type "pc"
+  coll.registerSheet("dragon-age", DragonAgePCActorSheet, {
+    types: ["pc"],
+    makeDefault: true
+  });
+
+  // NPC sheet for type "npc"
+  coll.registerSheet("dragon-age", DragonAgeNPCActorSheet, {
+    types: ["npc"],
     makeDefault: true
   });
 });
@@ -58,8 +97,6 @@ Hooks.on("preCreateActor", (actor, data) => {
   if (data.type === "pc") foundry.utils.setProperty(data, "prototypeToken.disposition", 1);
   if (data.type === "npc") foundry.utils.setProperty(data, "prototypeToken.disposition", -1);
 });
-
-
 
 /* -------------------------------------------- */
 /*  Auto-sync token art with actor image        */
