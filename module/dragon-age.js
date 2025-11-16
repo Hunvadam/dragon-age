@@ -67,7 +67,13 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
 /* -------------------------------------------- */
 
 Hooks.once("init", async () => {
-  console.log("DRAGON-AGE | Initializing (Legacy Sheet API, separate PC/NPC sheets)");
+  console.log("DRAGON-AGE | Initializing (Legacy Sheet API, separate PC/NPC sheets)"); 
+  
+    // --- Initiative formula for both PCs and NPCs ---
+  CONFIG.Combat.initiative = {
+    formula: "1d20 + @initiative.flat",
+    decimals: 0
+  };
 
   // Register our sheets
   const coll = foundry.documents.collections.Actors;
