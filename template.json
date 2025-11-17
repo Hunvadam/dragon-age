@@ -2,6 +2,7 @@
   "Actor": {
     "templates": {
       "base": {
+        "class": "warrior",
         "resources": {
           "health": {
             "value": 10,

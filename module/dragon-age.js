@@ -41,6 +41,17 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
       height: 640
     });
   }
+  
+    async getData(options) {
+    const data = await super.getData(options);
+
+    const cls = data.actor.system.class ?? "warrior";
+    let label = "Stamina";
+    if (cls === "mage") label = "Mana";
+
+    data.resourceLabel = label;
+    return data;
+  }
 
   /** Called whenever the sheet form is submitted. */
   async _updateObject(event, formData) {
