@@ -2,7 +2,9 @@
   "Actor": {
     "templates": {
       "base": {
+        "race": "human",
         "class": "warrior",
+        "level": 1,
         "resources": {
           "health": {
             "value": 10,

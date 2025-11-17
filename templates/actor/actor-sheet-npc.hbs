@@ -10,6 +10,18 @@
     <h1>
       <input name="name" type="text" value="{{actor.name}}" placeholder="Name"/>
     </h1>
+    
+    {{!-- NPC RACE SELECTOR --}}
+    <div class="npc-race-select">
+      <label>Race</label>
+      <select name="system.race">
+        {{#select actor.system.race}}
+          <option value="human">Human</option>
+          <option value="darkspawn">Darkspawn</option>
+        {{/select}}
+      </select>
+    </div>
+
 
     {{!-- NPC CLASS SELECTOR --}}
     <div class="npc-class-select">
@@ -21,10 +33,26 @@
           <option value="mage">Mage</option>
           <option value="barbarian">Barbarian</option>
           <option value="battlewright">Battlewright</option>
+          <option value="leader">Leader</option>
         {{/select}}
       </select>
     </div>
   </header>
+  
+  {{!-- NPC LEVEL + LEVEL UP BUTTON --}}
+  <div class="npc-level-row">
+    <label>Level</label>
+    <input type="number"
+           name="system.level"
+           value="{{actor.system.level}}"
+           data-dtype="Number"
+           style="width: 50px;"/>
+
+    <button type="button" class="npc-level-up">
+      Level Up
+    </button>
+  </div>
+
 
   <!-- ===== RESOURCES: Health + Dynamic Resource ===== -->
   <section class="box">
