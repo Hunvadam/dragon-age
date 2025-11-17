@@ -53,15 +53,44 @@
       <section class="box">
         <h2>{{localize "DragonAge.Attributes"}}</h2>
         <div class="stat-column">
-          <div><label>{{localize "DragonAge.Str"}}</label><input type="number" name="system.attributes.strength" value="{{actor.system.attributes.strength}}" data-dtype="Number"/></div>
-          <div><label>{{localize "DragonAge.Dex"}}</label><input type="number" name="system.attributes.dexterity" value="{{actor.system.attributes.dexterity}}" data-dtype="Number"/></div>
-          <div><label>{{localize "DragonAge.Con"}}</label><input type="number" name="system.attributes.constitution" value="{{actor.system.attributes.constitution}}" data-dtype="Number"/></div>
-          <div><label>{{localize "DragonAge.Int"}}</label><input type="number" name="system.attributes.intelligence" value="{{actor.system.attributes.intelligence}}" data-dtype="Number"/></div>
-          <div><label>{{localize "DragonAge.Wis"}}</label><input type="number" name="system.attributes.wisdom" value="{{actor.system.attributes.wisdom}}" data-dtype="Number"/></div>
-          <div><label>{{localize "DragonAge.Cha"}}</label><input type="number" name="system.attributes.charisma" value="{{actor.system.attributes.charisma}}" data-dtype="Number"/></div>
-          <div><label>{{localize "DragonAge.Mag"}}</label><input type="number" name="system.attributes.magic" value="{{actor.system.attributes.magic}}" data-dtype="Number"/></div>
+          <div>
+            <label>{{localize "DragonAge.Str"}}</label>
+            <input type="number" name="system.attributes.strength" value="{{actor.system.attributes.strength}}" data-dtype="Number"/>
+            <span class="attr-mod">({{actor.system.derived.mods.strength}})</span>
+          </div>
+          <div>
+            <label>{{localize "DragonAge.Dex"}}</label>
+            <input type="number" name="system.attributes.dexterity" value="{{actor.system.attributes.dexterity}}" data-dtype="Number"/>
+            <span class="attr-mod">({{actor.system.derived.mods.dexterity}})</span>
+          </div>
+          <div>
+            <label>{{localize "DragonAge.Con"}}</label>
+            <input type="number" name="system.attributes.constitution" value="{{actor.system.attributes.constitution}}" data-dtype="Number"/>
+            <span class="attr-mod">({{actor.system.derived.mods.constitution}})</span>
+          </div>
+          <div>
+            <label>{{localize "DragonAge.Int"}}</label>
+            <input type="number" name="system.attributes.intelligence" value="{{actor.system.attributes.intelligence}}" data-dtype="Number"/>
+            <span class="attr-mod">({{actor.system.derived.mods.intelligence}})</span>
+          </div>
+          <div>
+            <label>{{localize "DragonAge.Wis"}}</label>
+            <input type="number" name="system.attributes.wisdom" value="{{actor.system.attributes.wisdom}}" data-dtype="Number"/>
+            <span class="attr-mod">({{actor.system.derived.mods.wisdom}})</span>
+          </div>
+          <div>
+            <label>{{localize "DragonAge.Cha"}}</label>
+            <input type="number" name="system.attributes.charisma" value="{{actor.system.attributes.charisma}}" data-dtype="Number"/>
+            <span class="attr-mod">({{actor.system.derived.mods.charisma}})</span>
+          </div>
+          <div>
+            <label>{{localize "DragonAge.Mag"}}</label>
+            <input type="number" name="system.attributes.magic" value="{{actor.system.attributes.magic}}" data-dtype="Number"/>
+            <span class="attr-mod">({{actor.system.derived.mods.magic}})</span>
+          </div>
         </div>
       </section>
+
 
       <!-- ===== DEFENSE: Armor / Dodge / Weapon Damage / Initiative ===== -->
       <section class="box">

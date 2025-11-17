@@ -1,5 +1,35 @@
 // Dragon Age RPG — Foundry VTT v13 (Legacy API, stable + saving fixed)
 
+/* -------------------------------------------- */
+/*  Custom Actor document                        */
+/* -------------------------------------------- */
+
+class DragonAgeActor extends Actor {
+  /** Prepare derived (computed) data for the actor. */
+  prepareDerivedData() {
+    super.prepareDerivedData();
+
+    const system = this.system ?? {};
+    const attrs = system.attributes ?? {};
+
+    // Ensure derived container exists
+    system.derived ??= {};
+    const mods = {};
+
+    // Modifier formula: floor((score - 10) / 2)
+    for (const [key, value] of Object.entries(attrs)) {
+      const score = Number(value) || 0;
+      mods[key] = Math.floor((score - 10) / 5);
+    }
+
+    system.derived.mods = mods;
+  }
+}
+
+/* -------------------------------------------- */
+/*  Actor Sheets                                 */
+/* -------------------------------------------- */
+
 // PC sheet
 class DragonAgePCActorSheet extends foundry.appv1.sheets.ActorSheet {
   static get defaultOptions() {
@@ -31,7 +61,7 @@ class DragonAgePCActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 }
 
-// NPC sheet – currently identical to PC sheet
+// NPC sheet
 class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -41,12 +71,16 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
       height: 640
     });
   }
-  
-    async getData(options) {
+
+  /** Provide data to the NPC template (including dynamic labels). */
+  async getData(options) {
     const data = await super.getData(options);
 
     const cls = data.actor.system.class ?? "warrior";
+
+    // Default label
     let label = "Stamina";
+    // Mages use Mana, everyone else (including Battlewright) uses Stamina
     if (cls === "mage") label = "Mana";
 
     data.resourceLabel = label;
@@ -78,15 +112,17 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
 /* -------------------------------------------- */
 
 Hooks.once("init", async () => {
-  console.log("DRAGON-AGE | Initializing (Legacy Sheet API, separate PC/NPC sheets)"); 
-  
-    // --- Initiative formula for both PCs and NPCs ---
-  CONFIG.Combat.initiative = {
-    formula: "1d20 + @initiative.flat",
-    decimals: 0
-  };
+  console.log("DRAGON-AGE | Initializing (Legacy Sheet API, separate PC/NPC sheets + derived mods)");
 
-  // Register our sheets
+  // Use our custom Actor document class for all actors
+  CONFIG.Actor.documentClass = DragonAgeActor;
+
+  // Initiative formula for both PCs and NPCs
+  // Roll data root is actor.system, so this reads system.initiative.flat
+  CONFIG.Combat.initiative.formula  = "1d20 + @initiative.flat";
+  CONFIG.Combat.initiative.decimals = 0;
+
+  // Register sheets
   const coll = foundry.documents.collections.Actors;
   coll.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
 
@@ -125,14 +161,12 @@ Hooks.on("updateActor", async (actor, changed) => {
   const newImg = actor.img;
 
   // 1) Update prototype token texture for future drops
-  // (Only if it’s different; avoid unnecessary writes)
   const currentProto = actor.prototypeToken?.texture?.src;
   if (currentProto !== newImg) {
     await actor.update({ "prototypeToken.texture.src": newImg });
   }
 
   // 2) Update any placed tokens for this actor in the current scene
-  //    (Both linked and unlinked; remove the second line if you only want linked)
   const toUpdate = canvas.tokens.placeables
     .filter(t => t.actor?.id === actor.id)
     .map(t => ({ _id: t.id, "texture.src": newImg }));

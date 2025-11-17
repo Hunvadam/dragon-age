@@ -65,4 +65,10 @@
   overflow: hidden;          /* ensure corners are hidden */
 }
 
+.attr-mod {
+  margin-left: 4px;
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
 
