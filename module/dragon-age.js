@@ -7,42 +7,53 @@ const DA_LEVEL_TABLE = {
   human: {
     warrior: [
       { min: 1,  max: 5,  attr: "strength" },
-      { min: 6,  max: 10, attr: "constitution" },
-      { min: 11, max: 15, attr: "dexterity" },
-      { min: 16, max: 20, attr: "intelligence" } // or magic, tweak later
+      { min: 6, max: 8, attr: "dexterity" },
+      { min: 9,  max: 14, attr: "constitution" },
+      { min: 15, max: 16, attr: "intelligence" },
+      { min: 17, max: 18, attr: "wisdom" },
+      { min: 19, max: 20, attr: "charisma" }
     ],
     rogue: [
-      { min: 1,  max: 7,  attr: "dexterity" },
-      { min: 8,  max: 13, attr: "intelligence" },
-      { min: 14, max: 17, attr: "constitution" },
+      { min: 1,  max: 2,  attr: "strength" },
+      { min: 3, max: 8, attr: "dexterity" },
+      { min: 9,  max: 10, attr: "constitution" },
+      { min: 11, max: 13, attr: "intelligence" },
+      { min: 14, max: 17, attr: "wisdom" },
       { min: 18, max: 20, attr: "charisma" }
     ],
     mage: [
-      { min: 1,  max: 8,  attr: "magic" },
-      { min: 9,  max: 14, attr: "intelligence" },
-      { min: 15, max: 18, attr: "wisdom" },
-      { min: 19, max: 20, attr: "constitution" }
+      { min: 1, max: 2, attr: "dexterity" },
+      { min: 3,  max: 4, attr: "constitution" },
+      { min: 5, max: 8, attr: "intelligence" },
+      { min: 9, max: 13, attr: "wisdom" },
+      { min: 14, max: 17, attr: "charisma" },
+      { min: 15,  max: 20, attr: "magic" }
     ],
     barbarian: [
-      { min: 1,  max: 8,  attr: "strength" },
+      { min: 1,  max: 5,  attr: "strength" },
+      { min: 6, max: 8, attr: "dexterity" },
       { min: 9,  max: 14, attr: "constitution" },
-      { min: 15, max: 18, attr: "dexterity" },
+      { min: 15, max: 16, attr: "intelligence" },
+      { min: 17, max: 18, attr: "wisdom" },
       { min: 19, max: 20, attr: "charisma" }
     ],
     battlewright: [
-      { min: 1,  max: 7,  attr: "intelligence" },
-      { min: 8,  max: 13, attr: "magic" },
-      { min: 14, max: 17, attr: "constitution" },
-      { min: 18, max: 20, attr: "dexterity" }
+      { min: 1,  max: 2,  attr: "strength" },
+      { min: 3, max: 8, attr: "dexterity" },
+      { min: 9,  max: 10, attr: "constitution" },
+      { min: 11, max: 13, attr: "intelligence" },
+      { min: 14, max: 17, attr: "wisdom" },
+      { min: 18, max: 20, attr: "charisma" }
     ]
   },
 
   darkspawn: {
     // Darkspawn warrior: purely physical, no INT-focus
     warrior: [
-      { min: 1,  max: 8,  attr: "strength" },
-      { min: 9,  max: 15, attr: "constitution" },
-      { min: 16, max: 20, attr: "dexterity" }
+      { min: 1,  max: 5,  attr: "strength" },
+      { min: 11, max: 15, attr: "dexterity" },
+      { min: 6,  max: 10, attr: "constitution" },
+      { min: 16, max: 20, attr: "wisdom" }
     ],
     rogue: [
       { min: 1,  max: 8,  attr: "dexterity" },
@@ -62,6 +73,93 @@ const DA_LEVEL_TABLE = {
     // battlewright not defined → will fall back to human.battlewright
   }
 };
+
+// --------------------------------------------
+// Class progression: base + per-level growth
+// HP always scales with CON, stamina/mana with WIS.
+// (Numbers are placeholders – feel free to tweak.)
+// --------------------------------------------
+const DA_CLASS_PROGRESS = {
+  warrior: {
+    health: {
+      base: 25,        // HP at level 1 with CON mod = 0
+      perLevel: 8,     // HP gained each level
+      perConMod: 2     // extra HP per level per CON modifier
+    },
+    resource: {
+      base: 30,        // Stamina/Mana at level 1 with WIS mod = 0
+      perLevel: 12,     // gained each level
+      perWisMod: 4     // extra resource per level per WIS modifier
+    }
+  },
+
+  rogue: {
+    health: {
+      base: 20,
+      perLevel: 6,
+      perConMod: 2
+    },
+    resource: {
+      base: 40,
+      perLevel: 14,
+      perWisMod: 4
+    }
+  },
+
+  mage: {
+    health: {
+      base: 15,
+      perLevel: 5,
+      perConMod: 2
+    },
+    // Still stored in system.resources.stamina; sheet label shows "Mana"
+    resource: {
+      base: 50,
+      perLevel: 15,
+      perWisMod: 4
+    }
+  },
+
+  barbarian: {
+    health: {
+      base: 30,
+      perLevel: 10,
+      perConMod: 2
+    },
+    resource: {
+      base: 30,
+      perLevel: 10,
+      perWisMod: 4
+    }
+  },
+
+  battlewright: {
+    health: {
+      base: 20,
+      perLevel: 7,
+      perConMod: 2
+    },
+    resource: {
+      base: 40,
+      perLevel: 12,
+      perWisMod: 4
+    }
+  },
+
+  leader: {
+    health: {
+      base: 26,
+      perLevel: 7,
+      perConMod: 3
+    },
+    resource: {
+      base: 24,
+      perLevel: 6,
+      perWisMod: 3
+    }
+  }
+};
+
 
 function getAttributeFromRollByRaceClass(race, cls, roll) {
   const raceKey = race || "human";
@@ -96,30 +194,106 @@ class DragonAgeActor extends Actor {
     const system = this.system ?? {};
     const attrs = system.attributes ?? {};
 
-    // Ensure derived container exists
+    // ----------------------------------------
+    // 1) Attribute modifiers
+    // ----------------------------------------
     system.derived ??= {};
     const mods = {};
 
-    // Modifier formula: floor((score - 10) / 2)
+    // Modifier formula: floor((score - 10) / 5)
     for (const [key, value] of Object.entries(attrs)) {
       const score = Number(value) || 0;
       mods[key] = Math.floor((score - 10) / 5);
     }
-
     system.derived.mods = mods;
 
-    // Here is where we will later auto-calc:
-    // - saves
-    // - dodge / initiative
-    // - HP / stamina / mana etc.
+    const level = Math.max(1, Number(system.level ?? 1));
+    const cls = system.class ?? "warrior";
+
+    // ----------------------------------------
+    // 2) Ensure resource structure exists
+    // ----------------------------------------
+    system.resources ??= {};
+    system.resources.health ??= { value: 0, max: 0 };
+    system.resources.stamina ??= { value: 0, max: 0 };
+
+    const prog = DA_CLASS_PROGRESS[cls] ?? DA_CLASS_PROGRESS["warrior"];
+
+    // ----------------------------------------
+    // 3) Initialize Level 1 from base if nothing is set yet
+    //    (base = what they *start* with at level 1)
+    // ----------------------------------------
+    if (level === 1 && prog) {
+      const baseHP  = prog.health?.base   ?? 0;
+      const baseRes = prog.resource?.base ?? 0;
+
+      // Only initialize if max is not set or <= 0
+      if (!system.resources.health.max || system.resources.health.max <= 0) {
+        system.resources.health.max = baseHP;
+        if (!system.resources.health.value || system.resources.health.value <= 0) {
+          system.resources.health.value = baseHP;
+        }
+      }
+
+      if (!system.resources.stamina.max || system.resources.stamina.max <= 0) {
+        system.resources.stamina.max = baseRes;
+        if (!system.resources.stamina.value || system.resources.stamina.value <= 0) {
+          system.resources.stamina.value = baseRes;
+        }
+      }
+    }
+
+    // ----------------------------------------
+    // 4) Clamp current HP / Resource to their max
+    //    (NO formulas here: no level/CON/WIS scaling)
+    // ----------------------------------------
+    const maxHealth = Number(system.resources.health.max ?? 0);
+    const curHealth = Number(system.resources.health.value ?? maxHealth);
+    system.resources.health.max   = maxHealth;
+    system.resources.health.value = Math.min(curHealth, maxHealth);
+
+    const maxRes = Number(system.resources.stamina.max ?? 0);
+    const curRes = Number(system.resources.stamina.value ?? maxRes);
+    system.resources.stamina.max   = maxRes;
+    system.resources.stamina.value = Math.min(curRes, maxRes);
+
+    // ----------------------------------------
+    // 5) Defense: Dodge & Initiative
+    // ----------------------------------------
+    system.defense ??= {};
+    system.initiative ??= {};
+
+    const dexMod = mods.dexterity    ?? 0;
+    const conMod = mods.constitution ?? 0;
+    const wisMod = mods.wisdom       ?? 0;
+
+    // Your final rules:
+    // Dodge = 10 + Dex mod
+    system.defense.dodge = 10 + dexMod;
+
+    // Initiative flat bonus = Dex mod
+    system.initiative.flat = dexMod;
+
+    // ----------------------------------------
+    // 6) Saves: Fortitude / Reflex / Will
+    // ----------------------------------------
+    system.saves ??= {};
+
+    // Fortitude save = Con mod
+    system.saves.fortitude = conMod;
+
+    // Reflex save = Dex mod
+    system.saves.reflex = dexMod;
+
+    // Will save = Wis mod
+    system.saves.will = wisMod;
   }
 
   /** NPC / Actor Level Up logic: level + 2 attribute bumps (race + class) */
   async npcLevelUp() {
-    const system = this.system ?? {};
-    const race = system.race ?? "human";
-    const cls  = system.class ?? "warrior";
-    const currentLevel = Number(system.level ?? 1);
+    const race = this.system?.race ?? "human";
+    const cls  = this.system?.class ?? "warrior";
+    const currentLevel = Number(this.system?.level ?? 1);
     const newLevel = currentLevel + 1;
 
     // 1) Update the level
@@ -138,13 +312,13 @@ class DragonAgeActor extends Actor {
     const gained = [];
 
     if (attr1) {
-      const oldVal = Number(system.attributes?.[attr1] ?? 0);
+      const oldVal = Number(this.system.attributes?.[attr1] ?? 0);
       updates[`system.attributes.${attr1}`] = oldVal + 1;
       gained.push(attr1);
     }
 
     if (attr2) {
-      const base = updates[`system.attributes.${attr2}`] ?? system.attributes?.[attr2] ?? 0;
+      const base = updates[`system.attributes.${attr2}`] ?? this.system.attributes?.[attr2] ?? 0;
       const oldVal = Number(base);
       updates[`system.attributes.${attr2}`] = oldVal + 1;
       gained.push(attr2);
@@ -154,13 +328,51 @@ class DragonAgeActor extends Actor {
       await this.update(updates);
     }
 
-    // 4) Chat summary
+    // 4) Recompute derived to get up-to-date CON/WIS modifiers *after* attribute bumps
+    this.prepareDerivedData?.();
+    const s = this.system ?? {};
+    const mods = s.derived?.mods ?? {};
+    const conMod = mods.constitution ?? 0;
+    const wisMod = mods.wisdom ?? 0;
+
+    // 5) Increase max HP and resource ONCE for this level-up
+    const prog = DA_CLASS_PROGRESS[cls] ?? DA_CLASS_PROGRESS["warrior"];
+    const healthProg   = prog?.health   ?? {};
+    const resourceProg = prog?.resource ?? {};
+
+    // HP gain this level
+    const hpGain =
+      (healthProg.perLevel  ?? 0) +
+      (healthProg.perConMod ?? 0) * conMod;
+
+    // Stamina/Mana gain this level
+    const resGain =
+      (resourceProg.perLevel  ?? 0) +
+      (resourceProg.perWisMod ?? 0) * wisMod;
+
+    const oldMaxHP  = Number(s.resources?.health?.max  ?? 0);
+    const oldMaxRes = Number(s.resources?.stamina?.max ?? 0);
+
+    const newMaxHP  = Math.max(1, oldMaxHP  + hpGain);
+    const newMaxRes = Math.max(0, oldMaxRes + resGain);
+
+    await this.update({
+      "system.resources.health.max":   newMaxHP,
+      "system.resources.health.value": newMaxHP,   // full heal on level up
+      "system.resources.stamina.max":   newMaxRes,
+      "system.resources.stamina.value": newMaxRes  // full refill on level up
+    });
+
+    // 6) Chat summary
     let msg = `<strong>${this.name} leveled to ${newLevel}</strong><br>`;
     msg += `Race: ${race}, Class: ${cls}<br>`;
     msg += `Rolls: ${rolls[0]} → <strong>${attr1 ?? "—"}</strong>, ${rolls[1]} → <strong>${attr2 ?? "—"}</strong><br>`;
     if (gained.length) {
-      msg += `Increased: ${gained.join(", ")}`;
+      msg += `Increased: ${gained.join(", ")}<br>`;
     }
+    const poolName = cls === "mage" ? "Mana" : "Stamina";
+    msg += `Max HP +${hpGain}, Max ${poolName} +${resGain}.<br>`;
+    msg += `Health and ${poolName} fully restored.`;
 
     await ChatMessage.create({
       user: game.user.id,
@@ -171,13 +383,19 @@ class DragonAgeActor extends Actor {
 
     console.log(`DragonAge | Level Up`, {
       actor: this.name,
-      level: newLevel,
+      fromLevel: currentLevel,
+      toLevel: newLevel,
       race, cls,
       rolls,
-      increases: updates
+      increases: updates,
+      hpGain,
+      resGain,
+      newMaxHP,
+      newMaxRes
     });
   }
 }
+
 
 // --------------------------------------------
 // PC Actor Sheet
