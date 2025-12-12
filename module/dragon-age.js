@@ -5,7 +5,7 @@
 // --------------------------------------------
 const DA_LEVEL_TABLE = {
   human: {
-    warrior: [
+    warrior: [ // done
       { min: 1,  max: 5,  attr: "strength" },
       { min: 6, max: 8, attr: "dexterity" },
       { min: 9,  max: 14, attr: "constitution" },
@@ -44,31 +44,56 @@ const DA_LEVEL_TABLE = {
       { min: 11, max: 13, attr: "intelligence" },
       { min: 14, max: 17, attr: "wisdom" },
       { min: 18, max: 20, attr: "charisma" }
+    ],
+    champion: [ //done
+      { min: 1,  max: 3,  attr: "strength" },
+      { min: 4, max: 6, attr: "dexterity" },
+      { min: 10,  max: 14, attr: "constitution" },
+      { min: 7, max: 9, attr: "wisdom" },
+      { min: 15, max: 20, attr: "charisma" }
+    ],
+    templar: [ //done
+      { min: 1,  max: 3,  attr: "strength" },
+      { min: 4, max: 6, attr: "dexterity" },
+      { min: 7,  max: 9, attr: "constitution" },
+      { min: 13, max: 20, attr: "wisdom" },
+      { min: 10, max: 12, attr: "charisma" }
     ]
   },
 
   darkspawn: {
     // Darkspawn warrior: purely physical, no INT-focus
-    warrior: [
+    warrior: [ //done
       { min: 1,  max: 5,  attr: "strength" },
       { min: 11, max: 15, attr: "dexterity" },
       { min: 6,  max: 10, attr: "constitution" },
       { min: 16, max: 20, attr: "wisdom" }
     ],
-    rogue: [
+    rogue: [ //done
       { min: 1,  max: 8,  attr: "dexterity" },
-      { min: 9,  max: 15, attr: "strength" },
-      { min: 16, max: 20, attr: "constitution" }
+      { min: 9,  max: 10, attr: "strength" },
+      { min: 11, max: 14, attr: "constitution" },
+      { min: 15, max: 20, attr: "wisdom" }
     ],
-    mage: [
-      // Emissaries: heavy Magic, some CON/DEX
-      { min: 1,  max: 10, attr: "magic" },
-      { min: 11, max: 15, attr: "constitution" },
-      { min: 16, max: 20, attr: "dexterity" }
+    mage: [ //done
+      { min: 1, max: 2, attr: "dexterity" },
+      { min: 3,  max: 4, attr: "constitution" },
+      { min: 5, max: 7, attr: "intelligence" },
+      { min: 8, max: 10, attr: "wisdom" },
+      { min: 11, max: 13, attr: "charisma" },
+      { min: 14, max: 20, attr: "magic" }
     ],
-    barbarian: [
-      { min: 1,  max: 10, attr: "strength" },
-      { min: 11, max: 20, attr: "constitution" }
+    barbarian: [ //done
+      { min: 1,  max: 8,  attr: "strength" },
+      { min: 9,  max: 15, attr: "constitution" },
+      { min: 16, max: 20, attr: "wisdom" }
+    ],
+    champion: [ //done
+      { min: 1,  max: 3,  attr: "strength" },
+      { min: 4, max: 6, attr: "dexterity" },
+      { min: 10,  max: 14, attr: "constitution" },
+      { min: 7, max: 9, attr: "wisdom" },
+      { min: 15, max: 20, attr: "charisma" }
     ]
     // battlewright not defined → will fall back to human.battlewright
   }
@@ -146,16 +171,29 @@ const DA_CLASS_PROGRESS = {
     }
   },
 
-  leader: {
+  champion: {
     health: {
-      base: 26,
-      perLevel: 7,
-      perConMod: 3
+      base: 25,        // HP at level 1 with CON mod = 0
+      perLevel: 8,     // HP gained each level
+      perConMod: 2     // extra HP per level per CON modifier
     },
     resource: {
-      base: 24,
-      perLevel: 6,
-      perWisMod: 3
+      base: 30,        // Stamina/Mana at level 1 with WIS mod = 0
+      perLevel: 12,     // gained each level
+      perWisMod: 4     // extra resource per level per WIS modifier
+    }
+  },
+  
+  templar: {
+    health: {
+      base: 25,        // HP at level 1 with CON mod = 0
+      perLevel: 8,     // HP gained each level
+      perConMod: 2     // extra HP per level per CON modifier
+    },
+    resource: {
+      base: 30,        // Stamina/Mana at level 1 with WIS mod = 0
+      perLevel: 12,     // gained each level
+      perWisMod: 4     // extra resource per level per WIS modifier
     }
   }
 };
@@ -504,17 +542,6 @@ Hooks.once("init", async () => {
     types: ["npc"],
     makeDefault: true
   });
-});
-
-// --------------------------------------------
-// Token defaults
-// --------------------------------------------
-Hooks.on("preCreateActor", (actor, data) => {
-  if (!data.prototypeToken) data.prototypeToken = {};
-  foundry.utils.setProperty(data, "prototypeToken.bar1", { attribute: "system.resources.health" });
-  foundry.utils.setProperty(data, "prototypeToken.bar2", { attribute: "system.resources.stamina" });
-  if (data.type === "pc")  foundry.utils.setProperty(data, "prototypeToken.disposition", 1);
-  if (data.type === "npc") foundry.utils.setProperty(data, "prototypeToken.disposition", -1);
 });
 
 // --------------------------------------------

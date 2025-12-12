@@ -7,16 +7,12 @@
         "level": 1,
         "resources": {
           "health": {
-            "value": 10,
-            "max": 10
+            "value": 25,
+            "max": 25
           },
           "stamina": {
-            "value": 10,
-            "max": 10
-          },
-          "mana": {
-            "value": 10,
-            "max": 10
+            "value": 30,
+            "max": 30
           }
         },
         "attributes": {
