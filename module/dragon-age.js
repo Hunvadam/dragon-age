@@ -307,7 +307,7 @@ class DragonAgeActor extends Actor {
 
     // Your final rules:
     // Dodge = 10 + Dex mod
-    system.defense.dodge = 10 + dexMod;
+    system.defense.dodgeBase = 10 + dexMod;
 
     // Initiative flat bonus = Dex mod
     system.initiative.flat = dexMod;
@@ -433,8 +433,6 @@ class DragonAgeActor extends Actor {
     });
   }
 }
-
-
 // --------------------------------------------
 // PC Actor Sheet
 // --------------------------------------------
@@ -444,7 +442,10 @@ class DragonAgePCActorSheet extends foundry.appv1.sheets.ActorSheet {
       classes: ["dragon-age", "sheet", "actor", "pc"],
       template: "systems/dragon-age/templates/actor/actor-sheet.hbs",
       width: 720,
-      height: 640
+      height: 640,
+
+      // v13-native tabs support (do NOT use new Tabs() manually)
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }]
     });
   }
 
@@ -458,12 +459,33 @@ class DragonAgePCActorSheet extends foundry.appv1.sheets.ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Prevent default anchor behavior on tab links (safe)
+    html.find(".sheet-tabs [data-tab]").on("click", ev => ev.preventDefault());
+
+    // Autosave on field changes
     html.find("input, select, textarea").on("change", ev => {
       ev.preventDefault();
       this._onSubmit(ev, { preventClose: true });
     });
+
+    // Inventory controls (only if present in your hbs)
+    html.find(".item-edit").on("click", ev => {
+      ev.preventDefault();
+      const li = ev.currentTarget.closest("[data-item-id]");
+      const item = this.actor.items.get(li?.dataset?.itemId);
+      item?.sheet?.render(true);
+    });
+
+    html.find(".item-delete").on("click", async ev => {
+      ev.preventDefault();
+      const li = ev.currentTarget.closest("[data-item-id]");
+      const itemId = li?.dataset?.itemId;
+      if (!itemId) return;
+      await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+    });
   }
 }
+
 
 // --------------------------------------------
 // NPC Actor Sheet
@@ -474,7 +496,10 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
       classes: ["dragon-age", "sheet", "actor", "npc"],
       template: "systems/dragon-age/templates/actor/actor-sheet-npc.hbs",
       width: 720,
-      height: 640
+      height: 640,
+
+      // v13-native tabs support (do NOT use new Tabs() manually)
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }]
     });
   }
 
@@ -482,13 +507,8 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
     const data = await super.getData(options);
 
     const cls = data.actor.system.class ?? "warrior";
+    data.resourceLabel = (cls === "mage") ? "Mana" : "Stamina";
 
-    // Default label
-    let label = "Stamina";
-    // Mages use Mana (Battlewright uses Stamina)
-    if (cls === "mage") label = "Mana";
-
-    data.resourceLabel = label;
     return data;
   }
 
@@ -502,6 +522,9 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Prevent default anchor behavior on tab links (safe)
+    html.find(".sheet-tabs [data-tab]").on("click", ev => ev.preventDefault());
+
     // Autosave
     html.find("input, select, textarea").on("change", ev => {
       ev.preventDefault();
@@ -513,8 +536,111 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
       ev.preventDefault();
       this.actor.npcLevelUp();
     });
+
+    // Inventory controls (only if present in your hbs)
+    html.find(".item-edit").on("click", ev => {
+      ev.preventDefault();
+      const li = ev.currentTarget.closest("[data-item-id]");
+      const item = this.actor.items.get(li?.dataset?.itemId);
+      item?.sheet?.render(true);
+    });
+
+    html.find(".item-delete").on("click", async ev => {
+      ev.preventDefault();
+      const li = ev.currentTarget.closest("[data-item-id]");
+      const itemId = li?.dataset?.itemId;
+      if (!itemId) return;
+      await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+    });
   }
 }
+
+// --------------------------------------------
+// Item Sheet
+// --------------------------------------------
+class DragonAgeItemSheet extends foundry.appv1.sheets.ItemSheet {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      classes: ["dragon-age", "sheet", "item"],
+      template: "systems/dragon-age/templates/item/item-sheet.hbs",
+      width: 560,
+      height: 640
+    });
+  }
+
+  async getData(options) {
+    const data = await super.getData(options);
+
+    // Render tags array as a single comma string for easy editing
+    const tags = data.item?.system?.tags ?? [];
+    data.tagsString = Array.isArray(tags) ? tags.join(", ") : String(tags ?? "");
+
+    // Make sure effects are available to the template/partial
+    // (Foundry typically provides `effects`, but we ensure it exists)
+    data.effects = data.effects ?? this.document.effects?.contents ?? [];
+
+    return data;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    if (!this.isEditable) return;
+
+    // Effect controls (create/edit/delete/toggle)
+    html.find(".effect-control").on("click", async ev => {
+      ev.preventDefault();
+      const el = ev.currentTarget;
+      const action = el.dataset.action;
+
+      // For edit/delete/toggle we need an effect id from the parent <li>
+      const li = el.closest("[data-effect-id]");
+      const effectId = li?.dataset?.effectId;
+
+      switch (action) {
+        case "create": {
+          return this.document.createEmbeddedDocuments("ActiveEffect", [{
+            name: "New Effect",
+            icon: "icons/svg/aura.svg",
+            origin: this.document.uuid
+          }]);
+        }
+
+        case "edit": {
+          const effect = this.document.effects.get(effectId);
+          return effect?.sheet?.render(true);
+        }
+
+        case "delete": {
+          if (!effectId) return;
+          return this.document.deleteEmbeddedDocuments("ActiveEffect", [effectId]);
+        }
+
+        case "toggle": {
+          const effect = this.document.effects.get(effectId);
+          if (!effect) return;
+          return effect.update({ disabled: !effect.disabled });
+        }
+      }
+    });
+  }
+
+  async _updateObject(event, formData) {
+    const expanded = foundry.utils.expandObject(formData);
+
+    // Convert "system.tags" from comma string -> array
+    const rawTags = expanded.system?.tags;
+    if (typeof rawTags === "string") {
+      expanded.system.tags = rawTags
+        .split(",")
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    await this.document.update(expanded);
+  }
+}
+
 
 // --------------------------------------------
 // System initialization
@@ -524,6 +650,8 @@ Hooks.once("init", async () => {
 
   // Use our custom Actor document class
   CONFIG.Actor.documentClass = DragonAgeActor;
+  
+  CONFIG.ActiveEffect.legacyTransferral = false;
 
   // Initiative formula (uses system.initiative.flat)
   CONFIG.Combat.initiative.formula  = "1d20 + @initiative.flat";
@@ -542,6 +670,16 @@ Hooks.once("init", async () => {
     types: ["npc"],
     makeDefault: true
   });
+  
+  // Register Item sheets
+  const icoll = foundry.documents.collections.Items;
+  icoll.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
+
+  icoll.registerSheet("dragon-age", DragonAgeItemSheet, {
+    types: ["weapon", "equipment", "consumable", "ability"],
+    makeDefault: true
+  });
+
 });
 
 // --------------------------------------------
@@ -567,3 +705,5 @@ Hooks.on("updateActor", async (actor, changed) => {
     await canvas.scene.updateEmbeddedDocuments("Token", toUpdate);
   }
 });
+
+

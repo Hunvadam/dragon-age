@@ -1,4 +1,5 @@
 <form class="dragon-age sheet {{cssClass}}" autocomplete="off">
+
   <!-- ===== HEADER: Portrait + Name ===== -->
   <header class="sheet-header">
     <div class="profile-img">
@@ -10,7 +11,7 @@
     <h1>
       <input name="name" type="text" value="{{actor.name}}" placeholder="Name"/>
     </h1>
-    
+
     {{!-- NPC RACE SELECTOR --}}
     <div class="npc-race-select">
       <label>Race</label>
@@ -21,7 +22,6 @@
         {{/select}}
       </select>
     </div>
-
 
     {{!-- NPC CLASS SELECTOR --}}
     <div class="npc-class-select">
@@ -39,7 +39,7 @@
       </select>
     </div>
   </header>
-  
+
   {{!-- NPC LEVEL + LEVEL UP BUTTON --}}
   <div class="npc-level-row">
     <label>Level</label>
@@ -53,7 +53,6 @@
       Level Up
     </button>
   </div>
-
 
   <!-- ===== RESOURCES: Health + Dynamic Resource ===== -->
   <section class="box">
@@ -76,120 +75,162 @@
     </div>
   </section>
 
+  {{!-- ===== TABS NAV ===== --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="stats">Stats</a>
+    <a class="item" data-tab="inventory">Inventory</a>
+  </nav>
+
   <section class="sheet-body">
-    <div class="grid-2">
-      <!-- ===== Left Column: Attributes ===== -->
-      <section class="box">
-        <h2>{{localize "DragonAge.Attributes"}}</h2>
+
+    {{!-- =========================
+         STATS TAB (existing content)
+         ========================= --}}
+    <div class="tab" data-group="primary" data-tab="stats">
+
+      <div class="grid-2">
+        <!-- ===== Left Column: Attributes ===== -->
+        <section class="box">
+          <h2>{{localize "DragonAge.Attributes"}}</h2>
+          <div class="stat-column">
+            <div>
+              <label>{{localize "DragonAge.Str"}}</label>
+              <input type="number" name="system.attributes.strength" value="{{actor.system.attributes.strength}}" data-dtype="Number"/>
+              <span class="attr-mod">({{actor.system.derived.mods.strength}})</span>
+            </div>
+            <div>
+              <label>{{localize "DragonAge.Dex"}}</label>
+              <input type="number" name="system.attributes.dexterity" value="{{actor.system.attributes.dexterity}}" data-dtype="Number"/>
+              <span class="attr-mod">({{actor.system.derived.mods.dexterity}})</span>
+            </div>
+            <div>
+              <label>{{localize "DragonAge.Con"}}</label>
+              <input type="number" name="system.attributes.constitution" value="{{actor.system.attributes.constitution}}" data-dtype="Number"/>
+              <span class="attr-mod">({{actor.system.derived.mods.constitution}})</span>
+            </div>
+            <div>
+              <label>{{localize "DragonAge.Int"}}</label>
+              <input type="number" name="system.attributes.intelligence" value="{{actor.system.attributes.intelligence}}" data-dtype="Number"/>
+              <span class="attr-mod">({{actor.system.derived.mods.intelligence}})</span>
+            </div>
+            <div>
+              <label>{{localize "DragonAge.Wis"}}</label>
+              <input type="number" name="system.attributes.wisdom" value="{{actor.system.attributes.wisdom}}" data-dtype="Number"/>
+              <span class="attr-mod">({{actor.system.derived.mods.wisdom}})</span>
+            </div>
+            <div>
+              <label>{{localize "DragonAge.Cha"}}</label>
+              <input type="number" name="system.attributes.charisma" value="{{actor.system.attributes.charisma}}" data-dtype="Number"/>
+              <span class="attr-mod">({{actor.system.derived.mods.charisma}})</span>
+            </div>
+            <div>
+              <label>{{localize "DragonAge.Mag"}}</label>
+              <input type="number" name="system.attributes.magic" value="{{actor.system.attributes.magic}}" data-dtype="Number"/>
+              <span class="attr-mod">({{actor.system.derived.mods.magic}})</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== DEFENSE: Armor / Dodge / Weapon Damage / Initiative ===== -->
+        <section class="box">
+          <h2>{{localize "DragonAge.Defense"}}</h2>
+          <div class="stat-column">
+            <div><label>{{localize "DragonAge.Armor"}}</label><input type="number" name="system.defense.armor" value="{{actor.system.defense.armor}}" data-dtype="Number"/></div>
+            <div><label>{{localize "DragonAge.Dodge"}}</label><input type="number" name="system.defense.dodge" value="{{actor.system.defense.dodge}}" data-dtype="Number"/></div>
+            <div><label>{{localize "DragonAge.WeaponDamage"}}</label><input type="text" name="system.weapon.damage" value="{{actor.system.weapon.damage}}"/></div>
+            <div><label>{{localize "DragonAge.Initiative"}}</label><input type="number" name="system.initiative.flat" value="{{actor.system.initiative.flat}}" data-dtype="Number"/></div>
+          </div>
+        </section>
+
+        <h2 style="margin-top:12px">{{localize "DragonAge.Resistances"}}</h2>
         <div class="stat-column">
-          <div>
-            <label>{{localize "DragonAge.Str"}}</label>
-            <input type="number" name="system.attributes.strength" value="{{actor.system.attributes.strength}}" data-dtype="Number"/>
-            <span class="attr-mod">({{actor.system.derived.mods.strength}})</span>
-          </div>
-          <div>
-            <label>{{localize "DragonAge.Dex"}}</label>
-            <input type="number" name="system.attributes.dexterity" value="{{actor.system.attributes.dexterity}}" data-dtype="Number"/>
-            <span class="attr-mod">({{actor.system.derived.mods.dexterity}})</span>
-          </div>
-          <div>
-            <label>{{localize "DragonAge.Con"}}</label>
-            <input type="number" name="system.attributes.constitution" value="{{actor.system.attributes.constitution}}" data-dtype="Number"/>
-            <span class="attr-mod">({{actor.system.derived.mods.constitution}})</span>
-          </div>
-          <div>
-            <label>{{localize "DragonAge.Int"}}</label>
-            <input type="number" name="system.attributes.intelligence" value="{{actor.system.attributes.intelligence}}" data-dtype="Number"/>
-            <span class="attr-mod">({{actor.system.derived.mods.intelligence}})</span>
-          </div>
-          <div>
-            <label>{{localize "DragonAge.Wis"}}</label>
-            <input type="number" name="system.attributes.wisdom" value="{{actor.system.attributes.wisdom}}" data-dtype="Number"/>
-            <span class="attr-mod">({{actor.system.derived.mods.wisdom}})</span>
-          </div>
-          <div>
-            <label>{{localize "DragonAge.Cha"}}</label>
-            <input type="number" name="system.attributes.charisma" value="{{actor.system.attributes.charisma}}" data-dtype="Number"/>
-            <span class="attr-mod">({{actor.system.derived.mods.charisma}})</span>
-          </div>
-          <div>
-            <label>{{localize "DragonAge.Mag"}}</label>
-            <input type="number" name="system.attributes.magic" value="{{actor.system.attributes.magic}}" data-dtype="Number"/>
-            <span class="attr-mod">({{actor.system.derived.mods.magic}})</span>
-          </div>
+          <div><label>{{localize "DragonAge.Fire"}}</label><input type="number" name="system.resistances.fire" value="{{actor.system.resistances.fire}}" data-dtype="Number"/></div>
+          <div><label>{{localize "DragonAge.Cold"}}</label><input type="number" name="system.resistances.cold" value="{{actor.system.resistances.cold}}" data-dtype="Number"/></div>
+          <div><label>{{localize "DragonAge.Nature"}}</label><input type="number" name="system.resistances.nature" value="{{actor.system.resistances.nature}}" data-dtype="Number"/></div>
+          <div><label>{{localize "DragonAge.Spirit"}}</label><input type="number" name="system.resistances.spirit" value="{{actor.system.resistances.spirit}}" data-dtype="Number"/></div>
+          <div><label>{{localize "DragonAge.Electricity"}}</label><input type="number" name="system.resistances.electricity" value="{{actor.system.resistances.electricity}}" data-dtype="Number"/></div>
+          <div><label>{{localize "DragonAge.Blight"}}</label><input type="number" name="system.resistances.blight" value="{{actor.system.resistances.blight}}" data-dtype="Number"/></div>
         </div>
-      </section>
 
-
-      <!-- ===== DEFENSE: Armor / Dodge / Weapon Damage / Initiative ===== -->
-      <section class="box">
-        <h2>{{localize "DragonAge.Defense"}}</h2>
+        <h2 style="margin-top:12px">{{localize "DragonAge.Saves"}}</h2>
         <div class="stat-column">
-          <div><label>{{localize "DragonAge.Armor"}}</label><input type="number" name="system.defense.armor" value="{{actor.system.defense.armor}}" data-dtype="Number"/></div>
-          <div><label>{{localize "DragonAge.Dodge"}}</label><input type="number" name="system.defense.dodge" value="{{actor.system.defense.dodge}}" data-dtype="Number"/></div>
-          <div><label>{{localize "DragonAge.WeaponDamage"}}</label><input type="text" name="system.weapon.damage" value="{{actor.system.weapon.damage}}"/></div>
-          <div><label>{{localize "DragonAge.Initiative"}}</label><input type="number" name="system.initiative.flat" value="{{actor.system.initiative.flat}}" data-dtype="Number"/></div>
+          <div><label>{{localize "DragonAge.Fortitude"}}</label><input type="number" name="system.saves.fortitude" value="{{actor.system.saves.fortitude}}" data-dtype="Number"/></div>
+          <div><label>{{localize "DragonAge.Reflex"}}</label><input type="number" name="system.saves.reflex" value="{{actor.system.saves.reflex}}" data-dtype="Number"/></div>
+          <div><label>{{localize "DragonAge.Will"}}</label><input type="number" name="system.saves.will" value="{{actor.system.saves.will}}" data-dtype="Number"/></div>
         </div>
-      </section>
-
-      <h2 style="margin-top:12px">{{localize "DragonAge.Resistances"}}</h2>
-      <div class="stat-column">
-        <div><label>{{localize "DragonAge.Fire"}}</label><input type="number" name="system.resistances.fire" value="{{actor.system.resistances.fire}}" data-dtype="Number"/></div>
-        <div><label>{{localize "DragonAge.Cold"}}</label><input type="number" name="system.resistances.cold" value="{{actor.system.resistances.cold}}" data-dtype="Number"/></div>
-        <div><label>{{localize "DragonAge.Nature"}}</label><input type="number" name="system.resistances.nature" value="{{actor.system.resistances.nature}}" data-dtype="Number"/></div>
-        <div><label>{{localize "DragonAge.Spirit"}}</label><input type="number" name="system.resistances.spirit" value="{{actor.system.resistances.spirit}}" data-dtype="Number"/></div>
-        <div><label>{{localize "DragonAge.Electricity"}}</label><input type="number" name="system.resistances.electricity" value="{{actor.system.resistances.electricity}}" data-dtype="Number"/></div>
-        <div><label>{{localize "DragonAge.Blight"}}</label><input type="number" name="system.resistances.blight" value="{{actor.system.resistances.blight}}" data-dtype="Number"/></div>
       </div>
 
-      <h2 style="margin-top:12px">{{localize "DragonAge.Saves"}}</h2>
-      <div class="stat-column">
-        <div><label>{{localize "DragonAge.Fortitude"}}</label><input type="number" name="system.saves.fortitude" value="{{actor.system.saves.fortitude}}" data-dtype="Number"/></div>
-        <div><label>{{localize "DragonAge.Reflex"}}</label><input type="number" name="system.saves.reflex" value="{{actor.system.saves.reflex}}" data-dtype="Number"/></div>
-        <div><label>{{localize "DragonAge.Will"}}</label><input type="number" name="system.saves.will" value="{{actor.system.saves.will}}" data-dtype="Number"/></div>
-      </div>
+      <section class="box notes" style="margin-top:12px">
+        <h2>{{localize "DragonAge.Notes"}}</h2>
+        <textarea name="system.notes">{{actor.system.notes}}</textarea>
+      </section>
+
+      {{!-- NPC-specific trade/info block ----------------------------------------}}
+      <section class="npc-extra-grid">
+        <h2>NPC Items</h2>
+
+        <table class="npc-items-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Cost</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input type="text"
+                       name="system.npcItem.name"
+                       value="{{actor.system.npcItem.name}}"
+                       placeholder="Item name" />
+              </td>
+              <td>
+                <input type="text"
+                       name="system.npcItem.cost"
+                       value="{{actor.system.npcItem.cost}}"
+                       placeholder="Cost" />
+              </td>
+              <td>
+                <textarea name="system.npcItem.description"
+                          rows="2"
+                          placeholder="Description">{{actor.system.npcItem.description}}</textarea>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
     </div>
 
-    <section class="box notes" style="margin-top:12px">
-      <h2>{{localize "DragonAge.Notes"}}</h2>
-      <textarea name="system.notes">{{actor.system.notes}}</textarea>
-    </section>
+    {{!-- =========================
+         INVENTORY TAB (new)
+         ========================= --}}
+    <div class="tab" data-group="primary" data-tab="inventory">
 
-    {{!-- NPC-specific trade/info block ----------------------------------------}}
-    <section class="npc-extra-grid">
-      <h2>NPC Items</h2>
+      <section class="box">
+        <h2>Inventory</h2>
 
-      <table class="npc-items-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Cost</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <input type="text"
-                     name="system.npcItem.name"
-                     value="{{actor.system.npcItem.name}}"
-                     placeholder="Item name" />
-            </td>
-            <td>
-              <input type="text"
-                     name="system.npcItem.cost"
-                     value="{{actor.system.npcItem.cost}}"
-                     placeholder="Cost" />
-            </td>
-            <td>
-              <textarea name="system.npcItem.description"
-                        rows="2"
-                        placeholder="Description">{{actor.system.npcItem.description}}</textarea>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+        <ol class="items-list">
+          {{#each actor.items as |item|}}
+            <li class="item flexrow" data-item-id="{{item.id}}">
+              <div class="item-name">{{item.name}}</div>
+
+              <div class="item-controls">
+                <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+
+        {{!-- Tip text --}}
+        <p style="opacity:0.8; margin-top:8px;">
+          Drag &amp; drop Items onto this NPC to add them to inventory.
+        </p>
+      </section>
+
+    </div>
 
   </section>
 </form>

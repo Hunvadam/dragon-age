@@ -1,0 +1,181 @@
+<form class="dragon-age sheet item {{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" width="64" height="64"/>
+    <h1><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
+    <div class="item-meta">
+      <div><strong>Type:</strong> {{item.type}}</div>
+    </div>
+  </header>
+
+  <section class="sheet-body">
+    <h2>Shared</h2>
+    <div class="grid grid-2">
+      <div>
+        <label>Tier Value</label>
+        <input type="number" name="system.tier.value" value="{{item.system.tier.value}}" data-dtype="Number"/>
+      </div>
+      <div>
+        <label>Tier Name</label>
+        <input type="text" name="system.tier.name" value="{{item.system.tier.name}}"/>
+      </div>
+
+      <div>
+        <label>Price (gold)</label>
+        <input type="number" name="system.price" value="{{item.system.price}}" data-dtype="Number"/>
+      </div>
+      <div>
+        <label>Source</label>
+        <input type="text" name="system.source" value="{{item.system.source}}"/>
+      </div>
+
+      <div class="span-2">
+        <label>Tags (comma-separated)</label>
+        <input type="text" name="system.tags" value="{{tagsString}}"/>
+      </div>
+    </div>
+
+    <div style="margin-top:10px">
+      <label>Description</label>
+      <textarea name="system.description" rows="4">{{item.system.description}}</textarea>
+    </div>
+
+    <div style="margin-top:10px">
+      <label>GM Notes</label>
+      <textarea name="system.gmNotes" rows="3">{{item.system.gmNotes}}</textarea>
+    </div>
+
+    <hr style="margin: 12px 0"/>
+
+    {{#if (eq item.type "weapon")}}
+      <h2>Weapon</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Weapon Type</label>
+          <input type="text" name="system.weaponType" value="{{item.system.weaponType}}"/>
+        </div>
+        <div>
+          <label>Handedness</label>
+          <input type="text" name="system.handedness" value="{{item.system.handedness}}"/>
+        </div>
+        <div>
+          <label>Accuracy</label>
+          <input type="number" name="system.accuracy" value="{{item.system.accuracy}}" data-dtype="Number"/>
+        </div>
+        <div>
+          <label>Damage Type</label>
+          <input type="text" name="system.damageType" value="{{item.system.damageType}}"/>
+        </div>
+        <div>
+          <label>Attack Formula (optional)</label>
+          <input type="text" name="system.attackFormula" value="{{item.system.attackFormula}}"/>
+        </div>
+        <div>
+          <label>Damage Formula</label>
+          <input type="text" name="system.damageFormula" value="{{item.system.damageFormula}}"/>
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if (eq item.type "equipment")}}
+      <h2>Equipment</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Slot</label>
+          <input type="text" name="system.slot" value="{{item.system.slot}}"/>
+        </div>
+        <div>
+          <label>Equipped</label>
+          <input type="checkbox" name="system.equipped" {{checked item.system.equipped}}/>
+        </div>
+      </div>
+      <p style="opacity:.8;margin-top:6px">
+        Passive bonuses should be done with Active Effects on the item.
+      </p>
+    {{/if}}
+
+    {{#if (eq item.type "consumable")}}
+      <h2>Consumable</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Consumable Type</label>
+          <input type="text" name="system.consumableType" value="{{item.system.consumableType}}"/>
+        </div>
+        <div></div>
+        <div>
+          <label>Quantity</label>
+          <input type="number" name="system.quantity" value="{{item.system.quantity}}" data-dtype="Number"/>
+        </div>
+        <div>
+          <label>Consume Per Use</label>
+          <input type="number" name="system.consume" value="{{item.system.consume}}" data-dtype="Number"/>
+        </div>
+        <div>
+          <label>Use Formula (optional)</label>
+          <input type="text" name="system.useFormula" value="{{item.system.useFormula}}"/>
+        </div>
+        <div>
+          <label>Effect Text (optional)</label>
+          <input type="text" name="system.effectText" value="{{item.system.effectText}}"/>
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if (eq item.type "ability")}}
+      <h2>Ability</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Tree</label>
+          <input type="text" name="system.tree" value="{{item.system.tree}}"/>
+        </div>
+        <div>
+          <label>Tier In Tree</label>
+          <input type="number" name="system.tierInTree" value="{{item.system.tierInTree}}" data-dtype="Number"/>
+        </div>
+        <div>
+          <label>Stamina Cost</label>
+          <input type="number" name="system.staminaCost" value="{{item.system.staminaCost}}" data-dtype="Number"/>
+        </div>
+        <div></div>
+      </div>
+
+      <h3 style="margin-top:10px">Rolls</h3>
+      {{#each item.system.rolls as |r i|}}
+        <div class="grid grid-2" style="margin-bottom:6px">
+          <div>
+            <label>Label</label>
+            <input type="text" name="system.rolls.{{i}}.label" value="{{r.label}}"/>
+          </div>
+          <div>
+            <label>Formula</label>
+            <input type="text" name="system.rolls.{{i}}.formula" value="{{r.formula}}"/>
+          </div>
+        </div>
+      {{/each}}
+      <p style="opacity:.8">Add more rolls later once you want UI buttons for it.</p>
+    {{/if}}
+    
+    <hr style="margin: 12px 0"/>
+
+    <h2>Effects</h2>
+
+    <ol class="effects-list">
+      {{#each effects as |effect|}}
+        <li class="effect flexrow" data-effect-id="{{effect.id}}">
+          <img src="{{effect.icon}}" width="24" height="24"/>
+          <div class="effect-name">{{effect.name}}</div>
+          <div class="effect-controls">
+            <a class="effect-control" data-action="toggle"><i class="fas fa-toggle-on"></i></a>
+            <a class="effect-control" data-action="edit"><i class="fas fa-edit"></i></a>
+            <a class="effect-control" data-action="delete"><i class="fas fa-trash"></i></a>
+          </div>
+        </li>
+      {{/each}}
+    </ol>
+
+    <button type="button" class="effect-control" data-action="create">
+      <i class="fas fa-plus"></i> Add Effect
+    </button>
+
+
+  </section>
+</form>

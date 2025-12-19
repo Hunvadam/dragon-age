@@ -66,7 +66,58 @@
     }
   },
   "Item": {
-    "types": [],
-    "templates": {}
+    "types": ["weapon", "equipment", "consumable", "ability"],
+
+    "templates": {
+      "base": {
+        "description": "",
+        "tier": { "value": 1, "name": "" },
+        "tags": [],
+        "price": 0,
+        "source": "",
+        "gmNotes": ""
+      }
+    },
+
+    "weapon": {
+      "templates": ["base"],
+      "weaponType": "",
+      "handedness": "main",
+      "accuracy": 0,
+      "attackFormula": "",
+      "damageFormula": "1d6",
+      "damageType": "physical",
+      "properties": ""
+    },
+
+    "equipment": {
+      "templates": ["base"],
+      "slot": "",
+      "equipped": false,
+      "properties": ""
+    },
+
+    "consumable": {
+      "templates": ["base"],
+      "consumableType": "",
+      "quantity": 1,
+      "consume": 1,
+      "useFormula": "",
+      "effectText": "",
+      "properties": ""
+    },
+
+    "ability": {
+      "templates": ["base"],
+      "tree": "",
+      "tierInTree": 1,
+      "staminaCost": 0,
+      "rolls": [
+        { "label": "Roll", "formula": "" }
+      ],
+      "properties": ""
+    }
   }
+
+
 }
