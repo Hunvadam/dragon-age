@@ -732,6 +732,84 @@ Hooks.once("init", async () => {
 
 });
 
+
+// --------------------------------------------
+// Active Effects only apply when system.equipped = true
+// --------------------------------------------
+
+/**
+ * Enable/disable all Active Effects on an owned Item
+ * based on item.system.equipped.
+ */
+async function DA_syncItemEffectsWithEquipped(item) {
+  // Only matters for owned items (embedded in an Actor)
+  if (!item?.actor) return;
+
+  const equipped = Boolean(item.system?.equipped);
+
+  // item.effects is a Collection of ActiveEffect documents
+  const effects = item.effects?.contents ?? [];
+  if (!effects.length) return;
+
+  // If equipped => effects disabled=false, else disabled=true
+  const updates = effects.map(e => ({ _id: e.id, disabled: !equipped }));
+
+  // Update embedded ActiveEffects on the Item
+  await item.updateEmbeddedDocuments("ActiveEffect", updates);
+}
+
+// When an item is created on an actor (dragged/dropped), sync effects
+Hooks.on("createItem", async (item, options, userId) => {
+  if (!item?.actor) return;
+  await DA_syncItemEffectsWithEquipped(item);
+});
+
+// When the equipped checkbox changes, sync effects
+Hooks.on("updateItem", async (item, changed, options, userId) => {
+  if (!item?.actor) return;
+
+  // ---- Detect slot changes robustly ----
+  // Depending on how the sheet submits, this might be:
+  // changed.system.ui.equippedSlot
+  // OR changed.system.equippedSlot
+  // OR a flattened key "system.ui.equippedSlot"
+  const slotFromNested =
+    changed?.system?.ui?.equippedSlot ??
+    changed?.system?.equippedSlot;
+
+  const slotFromFlattened =
+    foundry.utils.getProperty(changed, "system.ui.equippedSlot") ??
+    foundry.utils.getProperty(changed, "system.equippedSlot");
+
+  const slotChanged = (slotFromNested !== undefined) || (slotFromFlattened !== undefined);
+
+  const newSlot = slotFromNested ?? slotFromFlattened;
+
+  // ---- Auto-toggle Equipped when slot changes ----
+  if (slotChanged) {
+    const shouldEquip = (typeof newSlot === "string") ? newSlot.trim().length > 0 : Boolean(newSlot);
+
+    // Only update if it actually differs (prevents loops)
+    if (Boolean(item.system?.equipped) !== shouldEquip) {
+      await item.update({ "system.equipped": shouldEquip }, { render: false });
+      // NOTE: this triggers updateItem again, which will fall through to the effect sync below.
+    }
+  }
+
+  // ---- If equipped toggled, sync effects ----
+  // This catches both:
+  // - manual checkbox toggles
+  // - our auto-toggle above
+  const equippedFromNested = changed?.system?.equipped;
+  const equippedFromFlattened = foundry.utils.getProperty(changed, "system.equipped");
+  const equippedChanged = (equippedFromNested !== undefined) || (equippedFromFlattened !== undefined);
+
+  if (equippedChanged) {
+    await DA_syncItemEffectsWithEquipped(item);
+  }
+});
+
+
 // --------------------------------------------
 // Auto-sync token art with actor image
 // --------------------------------------------

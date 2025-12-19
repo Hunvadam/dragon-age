@@ -162,41 +162,7 @@
         <textarea name="system.notes">{{actor.system.notes}}</textarea>
       </section>
 
-      {{!-- NPC-specific trade/info block --}}
-      <section class="npc-extra-grid">
-        <h2>NPC Items</h2>
-
-        <table class="npc-items-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Cost</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <input type="text"
-                       name="system.npcItem.name"
-                       value="{{actor.system.npcItem.name}}"
-                       placeholder="Item name" />
-              </td>
-              <td>
-                <input type="text"
-                       name="system.npcItem.cost"
-                       value="{{actor.system.npcItem.cost}}"
-                       placeholder="Cost" />
-              </td>
-              <td>
-                <textarea name="system.npcItem.description"
-                          rows="2"
-                          placeholder="Description">{{actor.system.npcItem.description}}</textarea>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+      
 
     </div>
 
