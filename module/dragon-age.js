@@ -221,6 +221,16 @@ function getAttributeFromRollByRaceClass(race, cls, roll) {
   return entry?.attr ?? null;
 }
 
+function getUi(item) {
+  const ui = item?.system?.ui ?? {};
+  return {
+    storageCategory: ui.storageCategory ?? "items",
+    equippedSlot: ui.equippedSlot ?? ""
+  };
+}
+
+
+
 // --------------------------------------------
 // Custom Actor document
 // --------------------------------------------
@@ -497,9 +507,13 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
       template: "systems/dragon-age/templates/actor/actor-sheet-npc.hbs",
       width: 720,
       height: 640,
-
-      // v13-native tabs support (do NOT use new Tabs() manually)
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }]
+      tabs: [
+        {
+          navSelector: ".sheet-tabs",
+          contentSelector: ".sheet-body",
+          initial: "stats"
+        }
+      ]
     });
   }
 
@@ -507,10 +521,48 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
     const data = await super.getData(options);
 
     const cls = data.actor.system.class ?? "warrior";
+
+    // Resource label: Mana for mages, Stamina otherwise
     data.resourceLabel = (cls === "mage") ? "Mana" : "Stamina";
+
+    // ---- Inventory UI grouping (UI-only fields) ----
+    const items = data.items ?? [];
+
+    // Equipped grid mapping: slotKey -> item
+    const equippedBySlot = {};
+    for (const it of items) {
+      const ui = getUi(it);
+      if (ui.equippedSlot) equippedBySlot[ui.equippedSlot] = it;
+    }
+    data.equippedBySlot = equippedBySlot;
+
+    // Storage categories (UI-only)
+    const cats = {
+      weapons: [],
+      equipment: [],
+      consumables: [],
+      items: [],
+      magical: []
+    };
+
+    for (const it of items) {
+      const ui = getUi(it);
+
+      // If it has an equipped slot, we show it in the grid, not storage
+      if (ui.equippedSlot) continue;
+
+      const key = ui.storageCategory || "items";
+      (cats[key] ?? cats.items).push(it);
+    }
+
+    data.storage = cats;
+
+    // Gold (actor field)
+    data.gold = data.actor.system?.currency?.gold ?? 0;
 
     return data;
   }
+
 
   async _updateObject(event, formData) {
     console.log("🧾 Raw formData (NPC):", formData);
@@ -521,9 +573,6 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html);
-
-    // Prevent default anchor behavior on tab links (safe)
-    html.find(".sheet-tabs [data-tab]").on("click", ev => ev.preventDefault());
 
     // Autosave
     html.find("input, select, textarea").on("change", ev => {
@@ -553,6 +602,7 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
       await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
     });
   }
+
 }
 
 // --------------------------------------------

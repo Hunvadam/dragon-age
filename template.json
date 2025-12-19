@@ -47,6 +47,10 @@
           "reflex": 0,
           "will": 0
         },
+        "currency": {
+          "gold": 0
+        },
+        
         "notes": ""
       }
     },
@@ -75,7 +79,11 @@
         "tags": [],
         "price": 0,
         "source": "",
-        "gmNotes": ""
+        "gmNotes": "",
+        "ui": {
+          "storageCategory": "items",
+          "equippedSlot": ""
+        }
       }
     },
 

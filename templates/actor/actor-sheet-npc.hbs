@@ -6,8 +6,6 @@
       <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
     </div>
 
-    {{log system.resources}}
-
     <h1>
       <input name="name" type="text" value="{{actor.name}}" placeholder="Name"/>
     </h1>
@@ -65,7 +63,6 @@
         <input type="number" name="system.resources.health.max" value="{{actor.system.resources.health.max}}" data-dtype="Number" style="width:55px;"/>
       </div>
 
-      {{!-- Dynamic resource row: label depends on class, value uses stamina for now --}}
       <div>
         <label>{{resourceLabel}}</label>
         <input type="number" name="system.resources.stamina.value" value="{{actor.system.resources.stamina.value}}" data-dtype="Number" style="width:55px;"/>
@@ -84,7 +81,7 @@
   <section class="sheet-body">
 
     {{!-- =========================
-         STATS TAB (existing content)
+         STATS TAB
          ========================= --}}
     <div class="tab" data-group="primary" data-tab="stats">
 
@@ -165,7 +162,7 @@
         <textarea name="system.notes">{{actor.system.notes}}</textarea>
       </section>
 
-      {{!-- NPC-specific trade/info block ----------------------------------------}}
+      {{!-- NPC-specific trade/info block --}}
       <section class="npc-extra-grid">
         <h2>NPC Items</h2>
 
@@ -204,30 +201,338 @@
     </div>
 
     {{!-- =========================
-         INVENTORY TAB (new)
+         INVENTORY TAB
          ========================= --}}
     <div class="tab" data-group="primary" data-tab="inventory">
 
       <section class="box">
         <h2>Inventory</h2>
 
-        <ol class="items-list">
-          {{#each actor.items as |item|}}
-            <li class="item flexrow" data-item-id="{{item.id}}">
-              <div class="item-name">{{item.name}}</div>
+        <div class="box" style="margin-bottom:12px">
+          <h2>Currency</h2>
+          <label>Gold</label>
+          <input type="number" name="system.currency.gold" value="{{gold}}" data-dtype="Number" style="width:90px"/>
+        </div>
 
-              <div class="item-controls">
-                <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
-                <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
-              </div>
-            </li>
-          {{/each}}
-        </ol>
+        <div class="box">
+          <h2>Equipped</h2>
 
-        {{!-- Tip text --}}
+          <table class="equipped-grid">
+            <thead>
+              <tr>
+                <th style="width:25%">Slot</th>
+                <th style="width:25%">Item</th>
+                <th style="width:25%">Slot</th>
+                <th style="width:25%">Item</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr>
+                <td>Helmet</td>
+                <td>
+                  {{#with equippedBySlot.helmet}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+
+                <td>Main Hand</td>
+                <td>
+                  {{#with equippedBySlot.mainHand}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+              </tr>
+
+              <tr>
+                <td>Armor</td>
+                <td>
+                  {{#with equippedBySlot.armor}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+
+                <td>Off Hand</td>
+                <td>
+                  {{#with equippedBySlot.offHand}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+              </tr>
+
+              <tr>
+                <td>Gloves</td>
+                <td>
+                  {{#with equippedBySlot.gloves}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+
+                <td>Bow</td>
+                <td>
+                  {{#with equippedBySlot.bow}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+              </tr>
+
+              <tr>
+                <td>Boots</td>
+                <td>
+                  {{#with equippedBySlot.boots}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+
+                <td>Arrow/Bolt</td>
+                <td>
+                  {{#with equippedBySlot.ammo}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+              </tr>
+
+              <tr>
+                <td>Amulet</td>
+                <td>
+                  {{#with equippedBySlot.amulet}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+
+                <td>Shield</td>
+                <td>
+                  {{#with equippedBySlot.shield}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+              </tr>
+
+              <tr>
+                <td>Belt</td>
+                <td>
+                  {{#with equippedBySlot.belt}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+
+                <td>Left Pouch</td>
+                <td>
+                  {{#with equippedBySlot.leftPouch}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+              </tr>
+
+              <tr>
+                <td>Left Ring</td>
+                <td>
+                  {{#with equippedBySlot.leftRing}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+
+                <td>Right Pouch</td>
+                <td>
+                  {{#with equippedBySlot.rightPouch}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+              </tr>
+
+              <tr>
+                <td>Right Ring</td>
+                <td>
+                  {{#with equippedBySlot.rightRing}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+
+                <td>Set Bonus</td>
+                <td>
+                  {{#with equippedBySlot.setBonus}}
+                    <div class="item flexrow" data-item-id="{{_id}}">
+                      <div class="item-name">{{name}}</div>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  {{else}}—{{/with}}
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+
+          <p style="opacity:.8;margin-top:6px">
+            UI-only. Set an item’s “Equipped Slot” in the item sheet to show it here.
+          </p>
+        </div>
+
+        <div class="box" style="margin-top:12px">
+          <h2>Storage</h2>
+
+          <h3>Weapons</h3>
+          <ol class="items-list">
+            {{#each storage.weapons as |it|}}
+              <li class="item flexrow" data-item-id="{{it._id}}">
+                <div class="item-name">{{it.name}}</div>
+                <div class="item-controls">
+                  <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                  <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                </div>
+              </li>
+            {{/each}}
+          </ol>
+
+          <h3>Equipment</h3>
+          <ol class="items-list">
+            {{#each storage.equipment as |it|}}
+              <li class="item flexrow" data-item-id="{{it._id}}">
+                <div class="item-name">{{it.name}}</div>
+                <div class="item-controls">
+                  <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                  <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                </div>
+              </li>
+            {{/each}}
+          </ol>
+
+          <h3>Consumables</h3>
+          <ol class="items-list">
+            {{#each storage.consumables as |it|}}
+              <li class="item flexrow" data-item-id="{{it._id}}">
+                <div class="item-name">{{it.name}}</div>
+                <div class="item-controls">
+                  <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                  <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                </div>
+              </li>
+            {{/each}}
+          </ol>
+
+          <h3>Items</h3>
+          <ol class="items-list">
+            {{#each storage.items as |it|}}
+              <li class="item flexrow" data-item-id="{{it._id}}">
+                <div class="item-name">{{it.name}}</div>
+                <div class="item-controls">
+                  <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                  <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                </div>
+              </li>
+            {{/each}}
+          </ol>
+
+          <h3>Magical Items</h3>
+          <ol class="items-list">
+            {{#each storage.magical as |it|}}
+              <li class="item flexrow" data-item-id="{{it._id}}">
+                <div class="item-name">{{it.name}}</div>
+                <div class="item-controls">
+                  <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                  <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                </div>
+              </li>
+            {{/each}}
+          </ol>
+        </div>
+
         <p style="opacity:0.8; margin-top:8px;">
           Drag &amp; drop Items onto this NPC to add them to inventory.
         </p>
+
       </section>
 
     </div>

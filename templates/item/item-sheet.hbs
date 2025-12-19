@@ -32,6 +32,53 @@
         <label>Tags (comma-separated)</label>
         <input type="text" name="system.tags" value="{{tagsString}}"/>
       </div>
+      
+      <h2>Organization (UI only)</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Storage Category</label>
+          <select name="system.ui.storageCategory">
+            {{#select item.system.ui.storageCategory}}
+              <option value="weapons">Weapons</option>
+              <option value="equipment">Equipment</option>
+              <option value="consumables">Consumables</option>
+              <option value="items">Items</option>
+              <option value="magical">Magical Items</option>
+            {{/select}}
+          </select>
+        </div>
+
+        <div>
+          <label>Equipped Slot</label>
+          <select name="system.ui.equippedSlot">
+            {{#select item.system.ui.equippedSlot}}
+              <option value="">— Not Equipped —</option>
+
+              <optgroup label="Armor Slots">
+                <option value="helmet">Helmet</option>
+                <option value="armor">Armor</option>
+                <option value="gloves">Gloves</option>
+                <option value="boots">Boots</option>
+                <option value="amulet">Amulet</option>
+                <option value="belt">Belt</option>
+                <option value="leftRing">Left Ring</option>
+                <option value="rightRing">Right Ring</option>
+              </optgroup>
+
+              <optgroup label="Weapon / Utility Slots">
+                <option value="mainHand">Main Hand</option>
+                <option value="offHand">Off Hand</option>
+                <option value="bow">Bow</option>
+                <option value="ammo">Arrow/Bolt</option>
+                <option value="shield">Shield</option>
+                <option value="leftPouch">Left Pouch</option>
+                <option value="rightPouch">Right Pouch</option>
+                <option value="setBonus">Set Bonus</option>
+              </optgroup>
+            {{/select}}
+          </select>
+        </div>
+      </div>
     </div>
 
     <div style="margin-top:10px">
