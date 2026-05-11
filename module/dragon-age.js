@@ -520,10 +520,13 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
   async getData(options) {
     const data = await super.getData(options);
 
-    const cls = data.actor.system.class ?? "warrior";
+    // Class + mage flag (define ONCE)
+    const cls = data.actor?.system?.class ?? "warrior";
+    const isMage = cls === "mage";
+    data.isMage = isMage;
 
     // Resource label: Mana for mages, Stamina otherwise
-    data.resourceLabel = (cls === "mage") ? "Mana" : "Stamina";
+    data.resourceLabel = isMage ? "Mana" : "Stamina";
 
     // ---- Inventory UI grouping (UI-only fields) ----
     const items = data.items ?? [];
@@ -558,10 +561,42 @@ class DragonAgeNPCActorSheet extends foundry.appv1.sheets.ActorSheet {
     data.storage = cats;
 
     // Gold (actor field)
-    data.gold = data.actor.system?.currency?.gold ?? 0;
+    data.gold = data.actor?.system?.currency?.gold ?? 0;
+
+    // ---- Abilities UI grouping ----
+    // Only embedded Items of type "ability"
+    const abilityItems = (items ?? []).filter(i => i.type === "ability");
+
+    // Buckets
+    data.weaponTalents = { active: [], passive: [] };
+    data.abilities     = { active: [], passive: [] };
+    data.spells        = { active: [], passive: [] };
+
+    // Helpers (safe defaults)
+    const getCat = (it) => it.system?.category ?? (isMage ? "spell" : "ability"); // mage default -> spell
+    const getAct = (it) => it.system?.activation ?? "active";                     // default -> active
+
+    for (const it of abilityItems) {
+      const cat = getCat(it);   // "weapon" | "ability" | "spell"
+      const act = getAct(it);   // "active" | "passive"
+
+      if (cat === "weapon") {
+        if (!isMage) (data.weaponTalents[act] ?? data.weaponTalents.active).push(it);
+        continue;
+      }
+
+      if (cat === "spell") {
+        (data.spells[act] ?? data.spells.active).push(it);
+        continue;
+      }
+
+      // default ability bucket
+      (data.abilities[act] ?? data.abilities.active).push(it);
+    }
 
     return data;
   }
+
 
 
   async _updateObject(event, formData) {

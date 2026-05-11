@@ -76,6 +76,7 @@
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="stats">Stats</a>
     <a class="item" data-tab="inventory">Inventory</a>
+    <a class="item" data-tab="abilities">Abilities</a>
   </nav>
 
   <section class="sheet-body">
@@ -161,9 +162,6 @@
         <h2>{{localize "DragonAge.Notes"}}</h2>
         <textarea name="system.notes">{{actor.system.notes}}</textarea>
       </section>
-
-      
-
     </div>
 
     {{!-- =========================
@@ -500,6 +498,90 @@
         </p>
 
       </section>
+
+    </div>
+
+    {{!-- =========================
+         ABILITIES TAB
+         ========================= --}}
+    <div class="tab abilities" data-group="primary" data-tab="abilities">
+
+      {{!-- MAGES: Spells only --}}
+      {{#if isMage}}
+        <section class="box">
+          <h2>Spells</h2>
+
+          <h3>Active</h3>
+          <ol class="item-list">
+            {{#each spells.active as |item|}}
+              <li class="item flexrow" data-item-id="{{item._id}}">
+                <img class="item-edit" src="{{item.img}}" width="24" height="24"/>
+                <span>{{item.name}}</span>
+              </li>
+            {{/each}}
+          </ol>
+
+          <h3>Passive</h3>
+          <ol class="item-list">
+            {{#each spells.passive as |item|}}
+              <li class="item flexrow" data-item-id="{{item._id}}">
+                <img class="item-edit" src="{{item.img}}" width="24" height="24"/>
+                <span>{{item.name}}</span>
+              </li>
+            {{/each}}
+          </ol>
+        </section>
+
+      {{!-- NON-MAGES: Weapon Talents + Abilities --}}
+      {{else}}
+        <section class="box">
+          <h2>Weapon Talents</h2>
+
+          <h3>Active</h3>
+          <ol class="item-list">
+            {{#each weaponTalents.active as |item|}}
+              <li class="item flexrow" data-item-id="{{item._id}}">
+                <img class="item-edit" src="{{item.img}}" width="24" height="24"/>
+                <span>{{item.name}}</span>
+              </li>
+            {{/each}}
+          </ol>
+
+          <h3>Passive</h3>
+          <ol class="item-list">
+            {{#each weaponTalents.passive as |item|}}
+              <li class="item flexrow" data-item-id="{{item._id}}">
+                <img class="item-edit" src="{{item.img}}" width="24" height="24"/>
+                <span>{{item.name}}</span>
+              </li>
+            {{/each}}
+          </ol>
+        </section>
+
+        <section class="box">
+          <h2>Abilities</h2>
+
+          <h3>Active</h3>
+          <ol class="item-list">
+            {{#each abilities.active as |item|}}
+              <li class="item flexrow" data-item-id="{{item._id}}">
+                <img class="item-edit" src="{{item.img}}" width="24" height="24"/>
+                <span>{{item.name}}</span>
+              </li>
+            {{/each}}
+          </ol>
+
+          <h3>Passive</h3>
+          <ol class="item-list">
+            {{#each abilities.passive as |item|}}
+              <li class="item flexrow" data-item-id="{{item._id}}">
+                <img class="item-edit" src="{{item.img}}" width="24" height="24"/>
+                <span>{{item.name}}</span>
+              </li>
+            {{/each}}
+          </ol>
+        </section>
+      {{/if}}
 
     </div>
 
