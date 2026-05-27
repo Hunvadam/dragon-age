@@ -72,3 +72,15 @@
 }
 
 
+/* height set by JS in _onRender / setPosition */
+.window-app.dragon-age .sheet-body {
+  overflow-y: auto;
+}
+
+/* === Font: pin to Signika Negative to match FVTT v14 standard === */
+.window-app.dragon-age {
+  font-family: "Signika Negative", "Signika", sans-serif;
+  font-size: 13px;
+}
+
+

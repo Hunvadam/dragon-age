@@ -1,4 +1,10 @@
 {
+  "TYPES.Actor.pc": "Player Character",
+  "TYPES.Actor.npc": "NPC",
+  "TYPES.Item.weapon": "Weapon",
+  "TYPES.Item.equipment": "Equipment",
+  "TYPES.Item.consumable": "Consumable",
+  "TYPES.Item.ability": "Ability",
   "DragonAge.Title": "Dragon Age RPG (Homebrew)",
   "DragonAge.Attributes": "Attributes",
   "DragonAge.Resources": "Resources",
